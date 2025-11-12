@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Social Post Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="spg-root" class="spg-root">
+    <header class="spg-header">
+      <h3>Social Post Generator</h3>
+      <div class="spg-controls">
+        <label>Tone:
+          <select id="spg-tone">
+            <option value="complain">บ่น/เซ็ง</option>
+            <option value="funny">ขำ/แซว</option>
+            <option value="sad">เศร้า/ครุ่นคิด</option>
+            <option value="brag">โอ้อวด/ภูมิใจ</option>
+            <option value="neutral">เรียบๆ</option>
+          </select>
+        </label>
+        <label>Recent messages:
+          <input id="spg-count" type="number" min="1" max="10" value="4"/>
+        </label>
+      </div>
+    </header>
+
+    <main class="spg-main">
+      <section class="spg-preview">
+        <h4>Preview draft post</h4>
+        <textarea id="spg-draft" readonly rows="6" placeholder="รอข้อความ..."></textarea>
+        <div class="spg-buttons">
+          <button id="spg-copy">คัดลอก</button>
+          <button id="spg-edit">แก้ไข</button>
+          <button id="spg-open-tweet">Open Tweet</button>
+          <button id="spg-open-fb">Open Facebook Share</button>
+        </div>
+      </section>
+
+      <section class="spg-history">
+        <h4>Recent chat (extracted)</h4>
+        <div id="spg-messages" class="spg-messages"></div>
+      </section>
+
+      <section class="spg-settings">
+        <h4>Advanced</h4>
+        <label><input id="spg-insert-hashtags" type="checkbox" checked /> เพิ่ม hashtags อัตโนมัติ</label>
+        <label>Hashtag keywords (คั่นด้วย comma):
+          <input id="spg-keywords" placeholder="RPG,roleplay,GM" />
+        </label>
+        <small class="muted">Extension นี้จะไม่โพสต์เอง — จะเปิดหน้าต่างแชร์หรือคัดลอกข้อความให้เท่านั้น</small>
+      </section>
+    </main>
+
+    <footer class="spg-footer">
+      <small>Social Post Generator • ไม่โพสต์แทนผู้ใช้ • ใช้กับข้อความโรลเท่านั้น</small>
+    </footer>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>
