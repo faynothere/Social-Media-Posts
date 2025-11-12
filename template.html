@@ -1,12 +1,13 @@
 <!doctype html>
-<html>
+<html lang="th">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Social Post Generator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="spg-root" class="spg-root">
+  <div id="spg-root" class="spg-root" aria-live="polite">
     <header class="spg-header">
       <h3>Social Post Generator</h3>
       <div class="spg-controls">
@@ -16,7 +17,7 @@
             <option value="funny">ขำ/แซว</option>
             <option value="sad">เศร้า/ครุ่นคิด</option>
             <option value="brag">โอ้อวด/ภูมิใจ</option>
-            <option value="neutral">เรียบๆ</option>
+            <option value="neutral" selected>เรียบๆ</option>
           </select>
         </label>
         <label>Recent messages:
@@ -35,6 +36,33 @@
           <button id="spg-open-tweet">Open Tweet</button>
           <button id="spg-open-fb">Open Facebook Share</button>
         </div>
+        <div id="spg-debug" class="spg-debug"></div>
+      </section>
+
+      <section class="spg-history">
+        <h4>Recent chat (extracted)</h4>
+        <div id="spg-messages" class="spg-messages"></div>
+      </section>
+
+      <section class="spg-settings">
+        <h4>Advanced</h4>
+        <label><input id="spg-insert-hashtags" type="checkbox" checked /> เพิ่ม hashtags อัตโนมัติ</label>
+        <label>Hashtag keywords (คั่นด้วย comma):
+          <input id="spg-keywords" placeholder="RPG,roleplay,GM" />
+        </label>
+        <small class="muted">Extension นี้จะไม่โพสต์แทนผู้ใช้ — จะเปิดหน้าต่างแชร์หรือคัดลอกข้อความให้เท่านั้น</small>
+      </section>
+    </main>
+
+    <footer class="spg-footer">
+      <small>Social Post Generator • ไม่โพสต์แทนผู้ใช้ • ใช้กับข้อความโรลเท่านั้น</small>
+    </footer>
+  </div>
+
+  <!-- โหลด script ท้าย body เพื่อแน่ใจว่า DOM ของ panel ถูกสร้างแล้ว -->
+  <script type="module" src="index.js"></script>
+</body>
+</html>        </div>
       </section>
 
       <section class="spg-history">
