@@ -3,14 +3,294 @@
 
 (function() {
     const extensionName = 'roleplayPostGenerator';
+    let isInitialized = false;
     
     // ฟังก์ชันสำหรับโหลด CSS
     function loadCSS() {
-        const cssUrl = `${extensionFolder}/styles.css`;
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = cssUrl;
-        document.head.appendChild(link);
+        // ใช้ inline CSS แทนการโหลดจากไฟล์ภายนอก
+        const css = `
+            /* Roleplay Post Generator Extension Styles */
+            .rpg-container {
+                padding: 15px;
+                margin: 10px 0;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+            }
+            
+            .rpg-button {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                color: white;
+                padding: 10px 16px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 14px;
+                font-weight: 600;
+                margin: 4px 8px;
+                cursor: pointer;
+                border-radius: 20px;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            }
+            
+            .rpg-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+            
+            .rpg-modal {
+                display: none;
+                position: fixed;
+                z-index: 10000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0,0,0,0.5);
+                backdrop-filter: blur(5px);
+            }
+            
+            .rpg-modal-content {
+                background-color: #fefefe;
+                margin: 2% auto;
+                padding: 25px;
+                border: none;
+                width: 90%;
+                max-width: 500px;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                animation: modalSlideIn 0.3s ease;
+            }
+            
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .rpg-close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+            
+            .rpg-close:hover {
+                color: #333;
+            }
+            
+            .rpg-tabs {
+                display: flex;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #e4e6ea;
+                background: #f8f9fa;
+                border-radius: 12px;
+                padding: 4px;
+            }
+            
+            .rpg-tab {
+                flex: 1;
+                padding: 12px 16px;
+                cursor: pointer;
+                text-align: center;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                font-weight: 600;
+                color: #65676b;
+            }
+            
+            .rpg-tab.active {
+                background: white;
+                color: #1877f2;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            
+            .rpg-platform {
+                display: none;
+            }
+            
+            .rpg-platform.active {
+                display: block;
+            }
+            
+            .rpg-post {
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 12px;
+                padding: 20px;
+                margin: 15px 0;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                transition: transform 0.2s ease;
+            }
+            
+            .rpg-post:hover {
+                transform: translateY(-2px);
+            }
+            
+            .facebook-post {
+                border-left: 4px solid #1877f2;
+            }
+            
+            .twitter-post {
+                border-left: 4px solid #1da1f2;
+            }
+            
+            .instagram-post {
+                border-left: 4px solid #e4405f;
+            }
+            
+            .rpg-post-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            
+            .rpg-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                margin-right: 12px;
+                object-fit: cover;
+                border: 2px solid #e4e6ea;
+            }
+            
+            .rpg-post-info {
+                flex: 1;
+            }
+            
+            .rpg-name {
+                font-weight: bold;
+                margin: 0 0 4px 0;
+                color: #050505;
+            }
+            
+            .rpg-username {
+                color: #65676b;
+                font-size: 13px;
+                margin: 0 0 4px 0;
+            }
+            
+            .rpg-time {
+                color: #65676b;
+                font-size: 12px;
+                margin: 0;
+            }
+            
+            .rpg-more {
+                font-size: 20px;
+                color: #65676b;
+                cursor: pointer;
+            }
+            
+            .rpg-post-content {
+                margin: 15px 0;
+                line-height: 1.5;
+                color: #050505;
+                font-size: 15px;
+            }
+            
+            .rpg-post-actions {
+                display: flex;
+                border-top: 1px solid #eee;
+                padding-top: 12px;
+                margin-top: 15px;
+            }
+            
+            .rpg-action {
+                color: #65676b;
+                margin-right: 20px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: color 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .rpg-action:hover {
+                color: #1877f2;
+            }
+            
+            .rpg-instagram-image {
+                margin: 15px -20px;
+                background: #f8f9fa;
+                border-top: 1px solid #eee;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .rpg-image-placeholder {
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            
+            .rpg-post-time {
+                color: #8e8e8e;
+                font-size: 12px;
+                margin-top: 8px;
+            }
+            
+            .rpg-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }
+            
+            .rpg-refresh-btn, .rpg-copy-btn {
+                background: #f0f2f5;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 13px;
+                font-weight: 600;
+            }
+            
+            .rpg-refresh-btn:hover, .rpg-copy-btn:hover {
+                background: #e4e6ea;
+                transform: translateY(-1px);
+            }
+            
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .rpg-modal-content {
+                    margin: 5% auto;
+                    width: 95%;
+                    padding: 20px;
+                }
+                
+                .rpg-tabs {
+                    flex-direction: column;
+                }
+                
+                .rpg-actions {
+                    flex-direction: column;
+                }
+            }
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = css;
+        document.head.appendChild(style);
     }
     
     // ฟังก์ชันสำหรับสร้างโพสต์
@@ -183,7 +463,9 @@
         platforms.forEach(platform => {
             const postContent = generatePost(charName, userName, chat, platform);
             const container = document.getElementById(`rpg-${platform}-posts`);
-            container.innerHTML = createPostHTML(charName, postContent, platform);
+            if (container) {
+                container.innerHTML = createPostHTML(charName, postContent, platform);
+            }
         });
     }
     
@@ -273,13 +555,21 @@
     
     function copyPostToClipboard(platform) {
         const container = document.getElementById(`rpg-${platform}-posts`);
+        if (!container) return;
+        
         const postContent = container.querySelector('.rpg-post-content');
         const text = postContent.textContent || postContent.innerText;
         
         navigator.clipboard.writeText(text).then(() => {
-            toastr.success(`คัดลอกโพสต์ ${platform} เรียบร้อยแล้ว!`);
+            if (window.toastr) {
+                toastr.success(`คัดลอกโพสต์ ${platform} เรียบร้อยแล้ว!`);
+            } else {
+                console.log(`คัดลอกโพสต์ ${platform} เรียบร้อยแล้ว!`);
+            }
         }).catch(err => {
-            toastr.error('ไม่สามารถคัดลอกได้');
+            if (window.toastr) {
+                toastr.error('ไม่สามารถคัดลอกได้');
+            }
             console.error('Copy failed:', err);
         });
     }
@@ -287,7 +577,7 @@
     function addButtonToUI() {
         const checkExist = setInterval(() => {
             const sendButton = document.getElementById('send_but');
-            if (sendButton) {
+            if (sendButton && !document.getElementById('rpg-generate-button')) {
                 clearInterval(checkExist);
                 
                 const button = document.createElement('button');
@@ -298,12 +588,16 @@
                 button.onclick = showPostsModal;
                 
                 sendButton.parentNode.insertBefore(button, sendButton);
+                
+                console.log('✅ Roleplay Post Generator - ปุ่มถูกเพิ่มเรียบร้อยแล้ว');
             }
-        }, 100);
+        }, 500);
     }
     
     // เริ่มต้น extension
     function initializeExtension() {
+        if (isInitialized) return;
+        
         console.log('🎮 Roleplay Post Generator Extension กำลังโหลด...');
         
         // โหลด CSS
@@ -312,6 +606,7 @@
         // เพิ่มปุ่มใน UI
         addButtonToUI();
         
+        isInitialized = true;
         console.log('✅ Roleplay Post Generator Extension โหลดเสร็จแล้ว!');
     }
     
@@ -319,6 +614,14 @@
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeExtension);
     } else {
-        initializeExtension();
+        setTimeout(initializeExtension, 1000);
+    }
+    
+    // Export สำหรับ SillyTavern Extension System
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = {
+            name: extensionName,
+            initialize: initializeExtension
+        };
     }
 })();
